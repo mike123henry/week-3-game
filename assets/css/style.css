@@ -1,1 +1,6 @@
 /*Hangman css Mike Henry*/
+/* debug code*/
+*{
+    border: 1px solid red !important
+}
+/*end debug code*/

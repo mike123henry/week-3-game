@@ -1,9 +1,188 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Hangman</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW Hangman HW</title>
+  <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  <link rel="stylesheet" type="text/css" href="https://bootswatch.com/darkly/bootstrap.min.css"
 </head>
-<body>
 
+<body>
+<div class="jumbotron">
+  <h1 class="text-center">Hangman</h1>
+  <div class="text-center">Text here</div>
+</div>
+<div class="container">
+  <div class="row"></div>
+    <div class="col-md-2 test-left">
+      <p>Put you tube stuff here</p>
+    </div>
+    <div class="col-md-6 text-center" id= "hangmanAreaHTML">
+      <h2 id="gameCmdHtml">Press any key to start playing</h2>
+      <p id="line1Html">   0</p>
+      <p id="line2Html">>--|--<</p>
+      <p id="line3Html">  / \</p>
+      <br>
+      <p id="unGuessedHtml"></p>
+      <p id="allGuessedHtml"></p>
+      <p id="guessesLeftHtml"></p>
+      <!--Put hangman stuff here -->
+    </div>
+    <div class="col-md-4 text-center" id="statsAreaHTML">
+      <p>Put game stats here</p>
+    </div>
+</div>
+
+<script>
+{
+//global varibals
+  var abcObj ={
+    letterAll: [],
+    alreadyGuessed:[]
+  }
+  var stringAbcGuessed;
+  var stringAbcLeft;
+  var lettersCorrect;
+  var lettersMissed;
+  var percentGuessedRight;
+  var gamesWon;
+  var gamesLost;
+  var guessesLeft;
+  var percentGamesWon;
+  var currentWinningStreak;
+  var longestWinningStreak;
+  var hangmanAreaText;
+  var gameCmdTxt;
+  var userGuess;
+//end gobal variables
+
+//initilization
+  initFirstGame();
+  initilizeABC();
+  stringABC();
+//end initization
+
+//control of hangman area
+
+  hangmanAreaText = "<h2>Press any key to start playing</h2>" +
+    "<p>0</p>" +
+    "<p>>--|--<</p>" +
+    "<p>  / \\</p>" +
+    "<br>"+
+    "<p>" + stringAbcLeft + "</p>" +
+    "<p>" + stringAbcGuessed + "</p>" +
+    "<p> Tries remaining = " + guessesLeft +"</p>"
+
+gameCmdText="<h2>xxxPress any key to start playing</h2>"
+    document.querySelector('#gameCmdHtml').innerHTML = gameCmdText;
+  document.querySelector('#hangmanAreaHTML').innerHTML = hangmanAreaText;
+
+//capture Key Clicks
+  document.onkeyup = function(event) {
+    var userGuess = String.fromCharCode(event.keyCode).toLowerCase();
+    var userGuessNdx=abcObj.letterAll.indexOf(userGuess);
+    //if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[userGuessNdx] === false){
+    if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[userGuessNdx] === false){
+      console.log("xxx");
+      console.log(userGuessNdx);
+      //mark the alreadyGuessed as true.
+      console.log(abcObj.alreadyGuessed[userGuessNdx]);
+      updateGuessed(userGuessNdx);
+console.log(abcObj.alreadyGuessed[userGuessNdx]);
+      //is userGuess in the search word?
+      //update stats
+      //update stringAbcLeft string
+      //update stringAbcGuessed string
+      //update & output hangmanAreaHTML
+    }
+
+  }
+
+//control of stats area
+
+//end control of stats area
+
+
+
+//functions
+
+  function updateGuessed(ndx){
+    abcObj.alreadyGuessed[ndx]=true;
+  }
+  function initilizeABC(){
+    abcObj.letterAll= ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+    abcObj.alreadyGuessed= [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+
+  } //end of initilizeABC
+
+  function initFirstGame(){
+    initNewGame();
+    gamesWon = 0;
+    gamesLost = 0;
+    percentGamesWon = 0;
+    longestWinningStreak = 0;
+  } // end of initFirstGame
+
+  function initNewGame(){
+    lettersCorrect = 0;
+    lettersMissed = 0;
+    guessesLeft = 10;
+    percentGuessedRight = 0;
+    currentWinningStreak = 0;
+  } // end of initNewGame
+  function stringABC(){
+    stringAbcLeft ="Letters remaining = |";
+    stringAbcGuessed="Letters already guessed = |";
+    for (var x = 0 ; x < abcObj.letterAll.length;x++){
+      if(abcObj.alreadyGuessed[x]==false){
+        stringAbcLeft=stringAbcLeft.concat(abcObj.letterAll[x])+"|";
+      } // end of if
+      else{
+        stringAbcLeft=stringAbcLeft.concat(" ")+"|";
+        stringAbcGuessed=stringAbcGuessed.concat(abcObj.letterAll[x])+"|";
+      } // end of else
+    }// end of for
+    //degug
+    if(true){
+      console.log(stringAbcGuessed);
+      console.log(stringAbcLeft);
+    }//end of if debug
+  }//end of stringABC()
+
+//  function outputHangmanArea(ndx){
+//    if(ndx == -1){
+//      initilizeHangmanArea()
+//    }
+//    switch (ndx) {
+//      case -1:
+//        gameCmdText=
+//        "<p>0</p>"
+//        break;
+//      case 0:
+        //Statements executed when the result of expression matches value2
+//        break;
+//      case 1:
+        //Statements executed when the result of expression matches valueN
+//        break;
+//      default:
+        //Statements executed when none of the values match the value of the expression
+//        break;
+//    //document.querySelector('#gameCmdHtml').innerHTML = gameCmdText;
+   // document.querySelector('#line1Html').innerHTML = line1Text;
+   // document.querySelector('#line2Html').innerHTML = line2Text;
+   // document.querySelector('#line3Html').innerHTML = line3Text;
+   // document.querySelector('#unGuessedHtml').innerHTML = unGuessedText;
+   // document.querySelector('#guessesLeftHtml').innerHTML = guessesLeftText;
+//  }
+
+
+// end functions
+}// end of scripts
+</script>
+
+
+<p>My second Paragraph.</p>
 </body>
 </html>
