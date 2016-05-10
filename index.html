@@ -15,16 +15,18 @@
   <div class="text-center">Text here</div>
 </div>
 <div class="container">
-  <div class="row"></div>
+  <div class="row">
     <div class="col-md-2 test-left">
       <p>Put you tube stuff here</p>
     </div>
     <div class="col-md-6 text-center" id= "hangmanAreaHTML">
-      <h2 id="gameCmdHtml">Press any key to start playing</h2>
+      <h2 id="gameCmdHtml">Press space bar to start playing</h2>
       <p id="line1Html">   0</p>
       <p id="line2Html">>--|--<</p>
       <p id="line3Html">  / \</p>
       <br>
+      <h2 id="searchWordHtml"> ***** </h2>
+      <br
       <p id="unGuessedHtml"></p>
       <p id="allGuessedHtml"></p>
       <p id="guessesLeftHtml"></p>
@@ -33,14 +35,29 @@
     <div class="col-md-4 text-center" id="statsAreaHTML">
       <p>Put game stats here</p>
     </div>
+  </div>
 </div>
 
 <script>
 {
 //global varibals
+  var debug = false;
   var abcObj ={
     letterAll: [],
     alreadyGuessed:[]
+  }
+  var wordFindObj ={
+    searchWord: "",
+    searchwordArray: [],
+    foundLettersArray: [],
+    foundLettersString: "",
+    foundLettersArrayToString: function(){
+      this.foundLettersString = ""; //reset to ensure it's clear before creating a new one
+      for(var x=0;x<this.foundLettersArray.length;x++){
+        this.foundLettersString = this.foundLettersString + this.foundLettersArray[x];
+      }
+    }
+
   }
   var stringAbcGuessed;
   var stringAbcLeft;
@@ -56,48 +73,44 @@
   var hangmanAreaText;
   var gameCmdTxt;
   var userGuess;
+  //var searchWord = "football";
 //end gobal variables
 
 //initilization
-  initFirstGame();
-  initilizeABC();
-  stringABC();
+
+  //initilizeABC();
+  //stringABC();
+
 //end initization
 
 //control of hangman area
 
-  hangmanAreaText = "<h2>Press any key to start playing</h2>" +
-    "<p>0</p>" +
-    "<p>>--|--<</p>" +
-    "<p>  / \\</p>" +
-    "<br>"+
-    "<p>" + stringAbcLeft + "</p>" +
-    "<p>" + stringAbcGuessed + "</p>" +
-    "<p> Tries remaining = " + guessesLeft +"</p>"
 
-gameCmdText="<h2>xxxPress any key to start playing</h2>"
-    document.querySelector('#gameCmdHtml').innerHTML = gameCmdText;
-  document.querySelector('#hangmanAreaHTML').innerHTML = hangmanAreaText;
 
 //capture Key Clicks
   document.onkeyup = function(event) {
-    var userGuess = String.fromCharCode(event.keyCode).toLowerCase();
-    var userGuessNdx=abcObj.letterAll.indexOf(userGuess);
-    //if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[userGuessNdx] === false){
-    if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[userGuessNdx] === false){
-      console.log("xxx");
-      console.log(userGuessNdx);
-      //mark the alreadyGuessed as true.
-      console.log(abcObj.alreadyGuessed[userGuessNdx]);
-      updateGuessed(userGuessNdx);
-console.log(abcObj.alreadyGuessed[userGuessNdx]);
-      //is userGuess in the search word?
-      //update stats
-      //update stringAbcLeft string
-      //update stringAbcGuessed string
-      //update & output hangmanAreaHTML
+    //wait for space bar hit
+    if (event.keyCode === 32){
+      //initilize first game if space bar hit
+      initFind("football");
+      initFirstGame();
     }
+    else{ //if not space bar is it a valid guess
+      var userGuess = String.fromCharCode(event.keyCode).toLowerCase();
+      var letterAllNdx=abcObj.letterAll.indexOf(userGuess);
+      //if vaild guess
+      if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[letterAllNdx] === false){
+        //mark the alreadyGuessed as true.
+        //update stringAbcLeft string
+        //update stringAbcGuessed string
+        //is userGuess in the search word?
+        evalUserGuess(userGuess , letterAllNdx);
+        //update stats
 
+        //update & output hangmanAreaHTML
+
+      }//end if valid guess
+    }//end of else not space bar
   }
 
 //control of stats area
@@ -109,12 +122,20 @@ console.log(abcObj.alreadyGuessed[userGuessNdx]);
 //functions
 
   function updateGuessed(ndx){
+    //track the letter guessed
     abcObj.alreadyGuessed[ndx]=true;
-  }
+    if(true){console.log("updateGuessed(ndx) = " + ndx);}
+    stringABC();
+    //output new ABC's to screen
+    var unGuessedStringText  ="<p id='unGuessedHtml'>" + stringAbcLeft + "</p>" ;
+    var guessedStringText = "<p id='allGuessedHtml'>" + stringAbcGuessed + "</p>";
+    document.querySelector('#unGuessedHtml').innerHTML = unGuessedStringText;
+    document.querySelector('#allGuessedHtml').innerHTML = guessedStringText;
+  }//end updateGuessed
+
   function initilizeABC(){
     abcObj.letterAll= ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
     abcObj.alreadyGuessed= [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
-
   } //end of initilizeABC
 
   function initFirstGame(){
@@ -123,9 +144,13 @@ console.log(abcObj.alreadyGuessed[userGuessNdx]);
     gamesLost = 0;
     percentGamesWon = 0;
     longestWinningStreak = 0;
+    outputHangmanArea(-1);
+
   } // end of initFirstGame
 
   function initNewGame(){
+    initilizeABC();
+    stringABC();
     lettersCorrect = 0;
     lettersMissed = 0;
     guessesLeft = 10;
@@ -144,40 +169,73 @@ console.log(abcObj.alreadyGuessed[userGuessNdx]);
         stringAbcGuessed=stringAbcGuessed.concat(abcObj.letterAll[x])+"|";
       } // end of else
     }// end of for
-    //degug
-    if(true){
-      console.log(stringAbcGuessed);
-      console.log(stringAbcLeft);
-    }//end of if debug
+    if(debug){console.log(stringAbcGuessed);console.log(stringAbcLeft);}
   }//end of stringABC()
 
-//  function outputHangmanArea(ndx){
-//    if(ndx == -1){
-//      initilizeHangmanArea()
-//    }
-//    switch (ndx) {
-//      case -1:
-//        gameCmdText=
-//        "<p>0</p>"
-//        break;
-//      case 0:
-        //Statements executed when the result of expression matches value2
-//        break;
-//      case 1:
-        //Statements executed when the result of expression matches valueN
-//        break;
-//      default:
-        //Statements executed when none of the values match the value of the expression
-//        break;
-//    //document.querySelector('#gameCmdHtml').innerHTML = gameCmdText;
-   // document.querySelector('#line1Html').innerHTML = line1Text;
-   // document.querySelector('#line2Html').innerHTML = line2Text;
-   // document.querySelector('#line3Html').innerHTML = line3Text;
-   // document.querySelector('#unGuessedHtml').innerHTML = unGuessedText;
-   // document.querySelector('#guessesLeftHtml').innerHTML = guessesLeftText;
-//  }
+  function outputHangmanArea(ndx){
+    if (true) {console.log("outputHangmanArea(ndx) = "+ndx)}
+    if(ndx == -1){
+      initilizeHangmanArea();
+    }
+    else{
+      //switch on the numbers of missed guesses
+      switch (ndx) {
+        case 0:
+          //Statements executed when the result of expression matches value2
+          break;
 
+      }
+      var searchWordText =   "<h2 id='searchWordHtml'>"+ wordFindObj.foundLettersString + "</h2>"
+      if (true) {console.log("searchWordText = "+ searchWordText);}
+      document.querySelector('#searchWordHtml').innerHTML = searchWordText;
+    } //end else not init
+  } //end outputHangmanArea
 
+  function  initFind(input){
+    wordFindObj.searchwordArray = input.split("");
+    for(var x = 0; x < wordFindObj.searchwordArray.length;x++){
+      wordFindObj.foundLettersArray[x] = "*";
+      //wordFindObj.foundLettersString = wordFindObj.foundLettersString + wordFindObj.foundLettersArray[x];
+      if(debug){
+        console.log("searchwordArray element"+ x +" =" + wordFindObj.searchwordArray[x]);
+        console.log("foundLettersArray element"+ x +" =" + wordFindObj.foundLettersArray[x]);
+      }//end if debug
+    }//end for
+    wordFindObj.foundLettersArrayToString();
+    if(true){console.log("foundLettersString = "+ wordFindObj.foundLettersString);}
+
+  }//end initFind()
+
+  function evalUserGuess(userGuess,letterAllNdx){
+    //is the guess is in the search Word
+    if(wordFindObj.searchwordArray.includes(userGuess)){
+      var searchwordArrayNdx=wordFindObj.searchwordArray.indexOf(userGuess);
+      if(true){console.log("foundLettersString = "+ wordFindObj.foundLettersString);}
+      wordFindObj.foundLettersArray[searchwordArrayNdx] = wordFindObj.searchwordArray[searchwordArrayNdx];
+      wordFindObj.foundLettersArrayToString();
+      updateGuessed(letterAllNdx);
+      outputHangmanArea(0);
+    }// end of correct guess
+    else{
+      //else incorrect guess
+      //increment fial counter
+      //putput stats
+    }
+  }// end evalUsserGuess()
+
+  function initilizeHangmanArea(){
+    hangmanAreaText = "<h2 id='gameCmdHtml'>Choose a letter</h2>" +
+      "<p id='line1Html'></p>" +
+      "<p id='line2Html'></p>" +
+      "<p id='line3Html'> </p>" +
+      "<br>"+
+      "<h2 id='searchWordHtml'>"+ wordFindObj.foundLettersString + "</h2>"+
+      "<br>"+
+      "<p id='unGuessedHtml'>" + stringAbcLeft + "</p>" +
+      "<p id='allGuessedHtml'>" + stringAbcGuessed + "</p>" +
+      "<p 'guessesLeftHtml'> Tries remaining = " + guessesLeft +"</p>"
+    document.querySelector('#hangmanAreaHTML').innerHTML = hangmanAreaText;
+  }
 // end functions
 }// end of scripts
 </script>
