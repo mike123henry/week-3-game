@@ -33,7 +33,12 @@
       <!--Put hangman stuff here -->
     </div>
     <div class="col-md-4 text-center" id="statsAreaHTML">
-      <p>Put game stats here</p>
+      <h2>Statistics</h2>
+      <br><br>
+      <p id='longestCorrectStreak'></p>
+      <p id='gamesWonHtml'></p>
+      <p id='gamesLostHtml'></p>
+
     </div>
   </div>
 </div>
@@ -48,7 +53,8 @@
   }
   var wordFindObj ={
     searchWord: "",
-    searchwordArray: [],
+    searchWordArray: [],
+    searchWordArrayLowerCase: [],
     foundLettersArray: [],
     foundLettersString: "",
     foundLettersArrayToString: function(){
@@ -57,8 +63,20 @@
         this.foundLettersString = this.foundLettersString + this.foundLettersArray[x];
       }
     }
-
   }
+  var gameWordsObj={
+    gameAlreadyPlayNdx: [],
+    gameWordList: [],
+    gameArtistList: [],
+    gameYouTubeList: [],
+    initAlreadyPlayNdx: function(){
+      for(var x=0;x<this.gameWordList.length;x++){
+        this.gameAlreadyPlayNdx[x] = x;
+      }
+    }
+  }
+
+
   var stringAbcGuessed;
   var stringAbcLeft;
   var lettersCorrect;
@@ -73,6 +91,7 @@
   var hangmanAreaText;
   var gameCmdTxt;
   var userGuess;
+  var gameOver;
   //var searchWord = "football";
 //end gobal variables
 
@@ -92,14 +111,19 @@
     //wait for space bar hit
     if (event.keyCode === 32){
       //initilize first game if space bar hit
-      initFind("football");
+      if (true) {console.log("114 if space bar b4 init");}
       initFirstGame();
+      initFind("FoooOOootball");
+      if (true) {console.log("114 if space bar");}
     }
-    else{ //if not space bar is it a valid guess
+    //else if (!gameOver){ //if not space bar is it a valid guess
+      else if (true){
       var userGuess = String.fromCharCode(event.keyCode).toLowerCase();
       var letterAllNdx=abcObj.letterAll.indexOf(userGuess);
       //if vaild guess
+      if (true) {console.log("122 if !gameOver");}
       if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[letterAllNdx] === false){
+        if (true) {console.log("124 if !gameOver and valid guess");}
         //mark the alreadyGuessed as true.
         //update stringAbcLeft string
         //update stringAbcGuessed string
@@ -110,7 +134,15 @@
         //update & output hangmanAreaHTML
 
       }//end if valid guess
-    }//end of else not space bar
+    }//end of game not over
+    else{ //wait for space bar to continue
+      if (event.keyCode === 32){
+      //initilize next game if space bar hit
+      if (true) {console.log("139 if space bar and !gameOver");}
+      initFind("football");
+      initNextGame();
+      }
+    }
   }
 
 //control of stats area
@@ -124,7 +156,7 @@
   function updateGuessed(ndx){
     //track the letter guessed
     abcObj.alreadyGuessed[ndx]=true;
-    if(true){console.log("updateGuessed(ndx) = " + ndx);}
+    if(true){console.log("153 abcObj.alreadyGuessed[ndx] = "+ abcObj.alreadyGuessed[ndx] + " ndx = " + ndx);}
     stringABC();
     //output new ABC's to screen
     var unGuessedStringText  ="<p id='unGuessedHtml'>" + stringAbcLeft + "</p>" ;
@@ -147,17 +179,19 @@
     percentGamesWon = 0;
     longestWinningStreak = 0;
     outputHangmanArea(-1);
-
+    initilizeFirstSearchWord();
   } // end of initFirstGame
 
   function initNewGame(){
     initilizeABC();
     stringABC();
+    //initilizeSearchWord();
     lettersCorrect = 0;
     lettersMissed = 0;
     guessesLeft = 10;
     percentGuessedRight = 0;
     currentWinningStreak = 0;
+    gameOver = false;
   } // end of initNewGame
   function stringABC(){
     stringAbcLeft ="Letters remaining = |";
@@ -171,11 +205,11 @@
         stringAbcGuessed=stringAbcGuessed.concat(abcObj.letterAll[x])+"|";
       } // end of else
     }// end of for
-    if(debug){console.log(stringAbcGuessed);console.log(stringAbcLeft);}
+    if(true){console.log("202 "+stringAbcGuessed);console.log("202 "+stringAbcLeft);}
   }//end of stringABC()
 
   function outputHangmanArea(ndx){
-    if (true) {console.log("outputHangmanArea(ndx) = "+ndx)}
+    if (true) {console.log("206 outputHangmanArea(ndx) = "+ndx)}
     if(ndx == -1){
       initilizeHangmanArea();
     }
@@ -226,49 +260,73 @@
           document.querySelector('#line3Html').innerHTML = line3Text;
           break;
       }
-      var searchWordText =   "<h2 id='searchWordHtml'>"+ wordFindObj.foundLettersString + "</h2>"
-      if (true) {console.log("searchWordText = "+ searchWordText);}
-      document.querySelector('#searchWordHtml').innerHTML = searchWordText;
-      "<p 'guessesLeftHtml'> Tries remaining = " + guessesLeft +"</p>"
     } //end else not init
-  } //end outputHangmanArea
+      var searchWordText =   "<h2 id='searchWordHtml'>"+ wordFindObj.foundLettersString + "</h2>"
+      if (true) {console.log("263 wordFindObj.foundLettersString = "+ wordFindObj.foundLettersString);}
+      if (true) {console.log("264 outputHangmanArea searchWordText = "+ searchWordText);}
+      document.querySelector('#searchWordHtml').innerHTML = searchWordText;
+      //"<p 'guessesLeftHtml'> Tries remaining = " + guessesLeft +"</p>"
+    //} //end else not init
+  } //end outputHangmanArea()
 
+  //function initilizeSearchWord(){
   function  initFind(input){
-    wordFindObj.searchwordArray = input.split("");
-    for(var x = 0; x < wordFindObj.searchwordArray.length;x++){
+    var currentGameNdx = gameWordsObj.gameAlreadyPlayNdx[Math.floor(Math.random()*gameWordsObj.gameAlreadyPlayNdx.length)];
+    wordFindObj.searchWordArray = gameWordsObj.gameWordList[currentGameNdx].split("");
+    var  tempWord = gameWordsObj.gameWordList[currentGameNdx]
+    wordFindObj.searchWordArrayLowerCase = tempWord.split("");
+    console.log("wordFindObj.searchWordArray = "+wordFindObj.searchWordArray )
+    console.log("wordFindObj.searchWordArrayLowerCase = "+wordFindObj.searchWordArrayLowerCase )
+    //for (var i = 0; i > wordFindObj.searchWordArray.length ; i++) {
+    //  wordFindObj.searchWordArrayLowerCase[i] = wordFindObj.searchWordArray.toLowerCase[i];
+    //}
+    for(var x = 0; x < wordFindObj.searchWordArray.length;x++){
+      if (wordFindObj.searchWordArray[x] === " ") {
+        wordFindObj.foundLettersArray[x] = "  ";
+      }
+      else{
       wordFindObj.foundLettersArray[x] = "*";
+      }
       //wordFindObj.foundLettersString = wordFindObj.foundLettersString + wordFindObj.foundLettersArray[x];
       if(debug){
-        console.log("searchwordArray element"+ x +" =" + wordFindObj.searchwordArray[x]);
-        console.log("foundLettersArray element"+ x +" =" + wordFindObj.foundLettersArray[x]);
+        console.log("293 searchWordArray element"+ x +" =" + wordFindObj.searchWordArray[x]);
+        console.log("294 foundLettersArray element"+ x +" =" + wordFindObj.foundLettersArray[x]);
       }//end if debug
     }//end for
     wordFindObj.foundLettersArrayToString();
-    if(true){console.log("foundLettersString = "+ wordFindObj.foundLettersString);}
-
+    if(true){console.log("298 foundLettersString = "+ wordFindObj.foundLettersString);}
+    outputHangmanArea(0);
   }//end initFind()
 
   function evalUserGuess(userGuess,letterAllNdx){
+    if(true){console.log("303 evalUserGuess(userGuess,letterAllNdx) = "+ userGuess +" =" +letterAllNdx);}
+    if (true) {console.log("304 wordFindObj.searchWordArrayLowerCase.length) = "+ wordFindObj.searchWordArrayLowerCase.length);}
     //is the guess is in the search Word
-    if(wordFindObj.searchwordArray.includes(userGuess)){
-      var searchwordArrayNdx=wordFindObj.searchwordArray.indexOf(userGuess);
-      var searchwordArrayLastNdx=wordFindObj.searchwordArray.lastIndexOf(userGuess);
-      if(true){console.log("foundLettersString = "+ wordFindObj.foundLettersString);}
-      wordFindObj.foundLettersArray[searchwordArrayNdx] = wordFindObj.searchwordArray[searchwordArrayNdx];
+    for (var x=0; x<wordFindObj.searchWordArray.length;x++){
+
+      if(true){console.log("307 searchWordArrayLowerCase(x) = "+ wordFindObj.searchWordArrayLowerCase[x] +" =" +x);
+      }
+    }
+    if(wordFindObj.searchWordArrayLowerCase.includes(userGuess)){
+      var searchWordArrayNdx=wordFindObj.searchWordArray.indexOf(userGuess);
+      var searchWordArrayLastNdx=wordFindObj.searchWordArray.lastIndexOf(userGuess);
+      if(true){console.log("313 foundLettersString = "+ wordFindObj.foundLettersString);}
+      //if the guess is in the word we are looking for add the letter to the word and update the abc lines
+      wordFindObj.foundLettersArray[searchWordArrayNdx] = wordFindObj.searchWordArray[searchWordArrayNdx];
       wordFindObj.foundLettersArrayToString();
       updateGuessed(letterAllNdx);
-
-      if (searchwordArrayNdx !=searchwordArrayLastNdx) {
-        if(true){console.log("searchwordArrayNdx != searchwordArrayLastNdx");}
-        for (var x=searchwordArrayNdx;x<wordFindObj.searchwordArray.length;x++){
-          if(true){console.log("x = " + x);}
-          searchwordArrayNdx++
-          searchwordArrayNdx = wordFindObj.searchwordArray.indexOf(userGuess, searchwordArrayNdx);
-          if(true){console.log("230 searchwordArrayNdx = " + searchwordArrayNdx);}
-          if(searchwordArrayNdx===-1){
-            if(true){console.log("232 searchwordArrayNdx = " + searchwordArrayNdx);}
+      //now check to see if the letter is in multiple places in the search word we are looking for
+      if (searchWordArrayNdx !=searchWordArrayLastNdx) {
+        if(true){console.log("308 searchWordArrayNdx != searchWordArrayLastNdx");}
+        for (var x=searchWordArrayNdx;x<wordFindObj.searchWordArray.length;x++){
+          if(true){console.log("310 x = " + x);}
+          searchWordArrayNdx++
+          searchWordArrayNdx = wordFindObj.searchWordArray.indexOf(userGuess, searchWordArrayNdx);
+          if(true){console.log("313 searchWordArrayNdx = " + searchWordArrayNdx);}
+          if(searchWordArrayNdx===-1){
+            if(true){console.log("315 searchWordArrayNdx = " + searchWordArrayNdx);}
             break;}
-          wordFindObj.foundLettersArray[searchwordArrayNdx] = wordFindObj.searchwordArray[searchwordArrayNdx];
+          wordFindObj.foundLettersArray[searchWordArrayNdx] = wordFindObj.searchWordArray[searchWordArrayNdx];
           wordFindObj.foundLettersArrayToString();
         }
       }
@@ -299,6 +357,49 @@
       "<p id='guessesLeftHtml'> Tries remaining = " + guessesLeft +"</p>"
     document.querySelector('#hangmanAreaHTML').innerHTML = hangmanAreaText;
   }
+  function updateStats(wasGuessCorrect){
+
+  }
+
+  function initilizeFirstSearchWord(){
+    //this is the hard way!
+    //need to add text file reader here.....
+
+    gameWordsObj.gameArtistList = ['3 Doors Down',
+                                   'Disturbed',
+                                   'Red Sun Rising',
+                                   'Bring Me The Horizon',
+                                   'Muse',
+                                   'SIXX:A.M.',
+                                   'Five Finger Death Punch',
+                                   'From Ashes To New',
+                                   'Papa Roach',
+                                   'Deftones'];
+    gameWordsObj.gameWordList =['In The Dark',
+                                'The Sound Of Silence',
+                                'Emotionless',
+                                'Happy Song',
+                                'Reapers',
+                                'Rise',
+                                'My Nemesis',
+                                'Through It All',
+                                'Falling Apart',
+                                'Prayers Triangles'];
+
+    gameWordsObj.gameYouTubeList= ['https://www.youtube.com/watch?v=Ch6PtKm_w7w',
+                                   'https://www.youtube.com/watch?v=u9Dg-g7t2l4',
+                                   'https://www.youtube.com/watch?v=awyBrr0P69A',
+                                   'https://www.youtube.com/watch?v=GBRAnuT48qo',
+                                   'https://www.youtube.com/watch?v=gcNEC9NaJuE',
+                                   'https://www.youtube.com/watch?v=gcNEC9NaJuE',
+                                   'https://www.youtube.com/watch?v=heDGwljdmvM',
+                                   'https://www.youtube.com/watch?v=5nSmdllDCtU',
+                                   'https://www.youtube.com/watch?v=aqYnMSUTFGU',
+                                   'https://www.youtube.com/watch?v=Aztiwn17vpE'];
+    gameWordsObj.initAlreadyPlayNdx();
+  }
+
+
 // end functions
 }// end of scripts
 </script>
