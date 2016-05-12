@@ -90,12 +90,13 @@
   var gamesLost;
   var guessesLeft;
   var percentGamesWon;
-  var currentWinningStreak;
-  var longestWinningStreak;
+  var currentCorrectGuessStreak;
+  var longestCorrectGuessStreak;
   var hangmanAreaText;
   var gameCmdTxt;
   var userGuess;
   var gameOver;
+  var youWon;
   //var searchWord = "football";
 //end gobal variables
 
@@ -155,6 +156,7 @@
   function updateGuessed(ndx){
     //track the letter guessed
     abcObj.alreadyGuessed[ndx]=true;
+    //format the abc strings for output
     stringABC();
     //output new ABC's to screen
     var unGuessedStringText  ="<p id='unGuessedHtml'>" + stringAbcLeft + "</p>" ;
@@ -176,7 +178,7 @@
     gamesWon = 0;
     gamesLost = 0;
     percentGamesWon = 0;
-    longestWinningStreak = 0;
+    longestCorrectGuessStreak = 0;
     outputHangmanArea(-1);
   } // end of initFirstGame
 
@@ -188,7 +190,7 @@
     lettersMissed = 0;
     guessesLeft = 10;
     percentGuessedRight = 0;
-    currentWinningStreak = 0;
+    currentCorrectGuessStreak = 0;
     gameOver = false;
   } // end of initNewGame
   function stringABC(){
@@ -259,8 +261,7 @@
     } //end else not init
       var searchWordText =   "<h2 id='searchWordHtml'>"+ wordFindObj.foundLettersString + "</h2>"
       document.querySelector('#searchWordHtml').innerHTML = searchWordText;
-      //"<p 'guessesLeftHtml'> Tries remaining = " + guessesLeft +"</p>"
-    //} //end else not init
+
   } //end outputHangmanArea()
 
   function initilizeSearchWord(){
@@ -299,12 +300,15 @@
       updateGuessed(letterAllNdx);
       //now check to see if the letter is in multiple places in the search word we are looking for
       if (searchWordArrayNdx !=searchWordArrayLastNdx) {
-        for (var x=searchWordArrayNdx;x<wordFindObj.searchWordArray.length;x++){
+        //increment searchWordArrayNdx by one and loop through until we get all of this userGuess
+        for (searchWordArrayNdx++;searchWordArrayNdx<wordFindObj.searchWordArray.length;searchWordArrayNdx++){
           console.log("searchWordArrayNdx = "+ searchWordArrayNdx)
-          searchWordArrayNdx++
           searchWordArrayNdx = wordFindObj.searchWordArray.indexOf(userGuess, searchWordArrayNdx);
           console.log("searchWordArrayNdx ++ = "+ searchWordArrayNdx)
           if(searchWordArrayNdx===-1){
+            //when wordFindObj.searchWordArray.indexOf returns -1
+            //there are no more of userGuess so break out of the loop
+            console.log("searchWordArrayNdx  break")
             break;
           }
           wordFindObj.foundLettersArray[searchWordArrayNdx] = wordFindObj.searchWordArray[searchWordArrayNdx];
@@ -312,6 +316,8 @@
         }
       }
       outputHangmanArea(0); //not a missed guess - don't add to the hangman
+      var wasGuessCorrect = true;
+      updateStats(wasGuessCorrect);
       //output stats
     }// end of correct guess
     else{
@@ -322,7 +328,10 @@
       outputHangmanArea(lettersMissed);
       updateGuessed(letterAllNdx);
       //putput stats
+      var wasGuessCorrect = false;
+      updateStats(wasGuessCorrect);
     }
+
   }// end evalUsserGuess()
 
   function initilizeHangmanArea(){
@@ -339,8 +348,76 @@
     document.querySelector('#hangmanAreaHTML').innerHTML = hangmanAreaText;
   }
   function updateStats(wasGuessCorrect){
+    console.log("b4  wasGuessCorrect = " + wasGuessCorrect);
+    console.log("lettersCorrect = " + lettersCorrect);
+    console.log("currentCorrectGuessStreak = " + currentCorrectGuessStreak);
+    console.log("longestCorrectGuessStreak = " + longestCorrectGuessStreak);
+    console.log("percentGuessedRight = " + percentGuessedRight);
+    console.log("youWon = " + youWon);
+    console.log("gamesWon = " + gamesWon);
+    console.log("gamesLost = " + gamesLost);
+    console.log("gameOver = " + gameOver);
+    console.log("percentGamesWon = " + percentGamesWon);
+    if (wasGuessCorrect) {
+      lettersCorrect++;
+      currentCorrectGuessStreak++;
+      if (currentCorrectGuessStreak > longestCorrectGuessStreak) {
+        longestCorrectGuessStreak = currentCorrectGuessStreak;
+      }
+    }
+    else{
+      lettersMissed++
+      currentCorrectGuessStreak = 0;
+    }
+    //trap for divide by zero etc.
+    if (lettersMissed > 0){
+      percentGuessedRight = (lettersCorrect / lettersMissed);
+    }
+    else if(lettersCorrect > 0 && lettersMissed === 0){
+      percentGuessedRight = 100;
+    }
+    else{
+      percentGuessedRight = 0;
+    }
+    // is the game won?
+    if(wordFindObj.foundLettersString.includes("*")){
+      youWon = false;
+    }
+    else{
+      youWon = true;
+      gameOver = true;
+      gamesWon++;
+    }
+    //is the game lost
+    if(guessesLeft===0){
+      gameOver = true;
+      gamesLost++;
+    }
 
-  }
+    if (gamesWon > 0 && gamesLost === 0) {
+      percentGamesWon  = 100;
+    }
+    else if (gamesLost > 0) {
+      percentGamesWon = (gamesWon / gamesLost);
+    }
+    else  {
+      percentGamesWon = 0;
+    }
+
+    console.log("after  wasGuessCorrect = " + wasGuessCorrect);
+    console.log("lettersCorrect = " + lettersCorrect);
+    console.log("currentCorrectGuessStreak = " + currentCorrectGuessStreak);
+    console.log("longestCorrectGuessStreak = " + longestCorrectGuessStreak);
+    console.log("percentGuessedRight = " + percentGuessedRight);
+    console.log("youWon = " + youWon);
+    console.log("gamesWon = " + gamesWon);
+    console.log("gamesLost = " + gamesLost);
+    console.log("gameOver = " + gameOver);
+    console.log("percentGamesWon = " + percentGamesWon);
+
+
+
+  }//end updateStats()
 
   function initilizeFirstSearchWord(){
     //this is the hard way!
