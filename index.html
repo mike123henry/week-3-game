@@ -12,6 +12,7 @@
 <body>
 <div class="jumbotron">
   <h1 id="header1" class="text-center">Can you beat LA Lloyd's Rockcountdown at a game of classic Hangman</h1>
+  <!--http://www.rock30.com/LA_Lloyd_Rock_Countdown/Home_files/424948_3170826625217_1102037981_3205266_302600201_n.jpg-->
   <div id='jumbotronSubHtml' class='text-center'>Do you dare??</div>
 </div>
 <div class="container">
@@ -194,10 +195,11 @@
   } // end of initFirstGame
 
   function initNewGame(){
-    outputHangmanArea(-1);
+    //outputHangmanArea(-1);
     initilizeABC();
     stringABC();
     initilizeSearchWord();
+    outputHangmanArea(-1);
     lettersCorrect = 0;
     lettersMissed = 0;
     guessesLeft = 10;
@@ -279,6 +281,12 @@
   function initilizeSearchWord(){
   //function  initFind(input){
     var currentGameNdx = gameWordsObj.gameAlreadyPlayNdx[Math.floor(Math.random()*gameWordsObj.gameAlreadyPlayNdx.length)];
+    //make it so games are not repeted
+    // remove the current from the available play list
+    console.log("b4 gameWordsObj.gameAlreadyPlayNdx.length = " +gameWordsObj.gameAlreadyPlayNdx.length)
+    gameWordsObj.gameAlreadyPlayNdx.splice(gameWordsObj.gameAlreadyPlayNdx.indexOf(currentGameNdx), 1);
+    console.log("after gameWordsObj.gameAlreadyPlayNdx.length = " +gameWordsObj.gameAlreadyPlayNdx.length)
+    console.log("gameWordsObj.gameAlreadyPlayNdx = " + gameWordsObj.gameAlreadyPlayNdx);
     console.log("gameWordsObj.gameWordList[currentGameNdx] = " + gameWordsObj.gameWordList[currentGameNdx] + " ndx = " + currentGameNdx);
     //reset all the wordFindObj arrays
     console.log("wordFindObj.searchWordArray.length = "+ wordFindObj.searchWordArray.length);
