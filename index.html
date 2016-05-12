@@ -11,22 +11,23 @@
 
 <body>
 <div class="jumbotron">
-  <h1 class="text-center">Hangman</h1>
-  <div class="text-center">Text here</div>
+  <h1 id="header1" class="text-center">Can you beat LA Lloyd's Rockcountdown at a game of classic Hangman</h1>
+  <div id='jumbotronSubHtml' class='text-center'>Do you dare??</div>
 </div>
 <div class="container">
   <div class="row">
-    <div class="col-md-2 test-left">
+    <div class="col-md-3 test-left">
       <p>Put you tube stuff here</p>
+      <!--<iframe width="175" height="98" src="https://www.youtube.com/embed/W0bAPXubHo4" frameborder="0" allowfullscreen></iframe>-->
     </div>
-    <div class="col-md-6 text-center" id= "hangmanAreaHTML">
+    <div class="col-md-5 text-center" id= "hangmanAreaHTML">
       <h2 id="gameCmdHtml">Press space bar to start playing</h2>
       <p id="line1Html">   0</p>
       <p id="line2Html">>--|--<</p>
       <p id="line3Html">  / \</p>
       <br>
       <h2 id="searchWordHtml"> ***** </h2>
-      <br
+      <br>
       <p id="unGuessedHtml"></p>
       <p id="allGuessedHtml"></p>
       <p id="guessesLeftHtml"></p>
@@ -35,9 +36,13 @@
     <div class="col-md-4 text-center" id="statsAreaHTML">
       <h2>Statistics</h2>
       <br><br>
-      <p id='longestCorrectStreak'></p>
       <p id='gamesWonHtml'></p>
       <p id='gamesLostHtml'></p>
+      <p id='percentGamesWonHtml'></p>
+      <p id='currentCorrectStreakHtml'></p>
+      <p id='longestCorrectStreakHtml'></p>
+      <p id='a'></p>
+      <p id='b'></p>
 
     </div>
   </div>
@@ -139,8 +144,8 @@
     else{ //wait for space bar to continue
       if (event.keyCode === 32){
       //initilize next game if space bar hit
-      //initFind();
-      initNextGame();
+      console.log("space bar and not first game")
+      initNewGame();
       }
     }
   }
@@ -173,16 +178,23 @@
   } //end of initilizeABC
 
   function initFirstGame(){
-    initilizeFirstSearchWord();
-    initNewGame();
+
     gamesWon = 0;
     gamesLost = 0;
     percentGamesWon = 0;
     longestCorrectGuessStreak = 0;
-    outputHangmanArea(-1);
+    lettersCorrect = 0;
+    lettersMissed = 0;
+    guessesLeft = 10;
+    percentGuessedRight = 0;
+    currentCorrectGuessStreak = 0;
+    initilizeFirstSearchWord();
+    initNewGame();
+
   } // end of initFirstGame
 
   function initNewGame(){
+    outputHangmanArea(-1);
     initilizeABC();
     stringABC();
     initilizeSearchWord();
@@ -393,12 +405,12 @@
       }
     }
     else{
-      lettersMissed++;
+      // lettersMissed++; this is done in evalUserGuess()
       currentCorrectGuessStreak = 0;
     }
     //trap for divide by zero etc.
     if (lettersMissed > 0){
-      percentGuessedRight = (lettersCorrect / lettersMissed);
+      percentGuessedRight = parseInt(lettersCorrect / (lettersCorrect + lettersMissed)*100);
     }
     else if(lettersCorrect > 0 && lettersMissed === 0){
       percentGuessedRight = 100;
@@ -412,12 +424,14 @@
     }
     else{
       youWon = true;
+      firstGame = false;
       gameOver = true;
       gamesWon++;
     }
     //is the game lost
     if(guessesLeft===0){
       gameOver = true;
+      firstGame = false;
       gamesLost++;
     }
 
@@ -425,12 +439,14 @@
       percentGamesWon  = 100;
     }
     else if (gamesLost > 0) {
-      percentGamesWon = (gamesWon / gamesLost);
+      percentGamesWon = parseInt(gamesWon / (gamesWon + gamesLost)*100);
     }
     else  {
       percentGamesWon = 0;
     }
-
+    if (gameOver === true) {
+      gameEnd();
+    }
     //console.log("after  wasGuessCorrect = " + wasGuessCorrect);
     //console.log("lettersCorrect = " + lettersCorrect);
     //console.log("currentCorrectGuessStreak = " + currentCorrectGuessStreak);
@@ -441,10 +457,37 @@
     //console.log("gamesLost = " + gamesLost);
     //console.log("gameOver = " + gameOver);
     //console.log("percentGamesWon = " + percentGamesWon);
-
-
-
+    outputStats();
   }//end updateStats()
+
+  function outputStats(){
+    var gamesWonText = "<p id='gamesWonHtml'> You have Won " + gamesWon + " games</p>";
+    if (gamesWon === 1 ) {
+      gamesWonText = "<p id='gamesWonHtml'> You have Won " + gamesWon + " game</p>"
+    };
+    var gamesLostText = "<p id='gamesLostHtml'> You have lost " + gamesLost + " games </p>";
+    if (gamesLost == 1) {
+      gamesLostText = "<p id='gamesLostHtml'> You have lost " + gamesLost + " game </p>"
+    };
+    var percentGamesWonText = "<p id='percentGamesWonHtml'> Your game winning percentage = " +percentGamesWon+" %</p>";
+    var currentCorrectStreakText = "<p id='currentCorrectStreakHtml'> You have currently guessed " + currentCorrectGuessStreak + " letters correctly in a row! </p>";
+    if (currentCorrectGuessStreak === 1) {
+      currentCorrectStreakText = "<p id='currentCorrectStreakHtml'> You have currently guessed " + currentCorrectGuessStreak + " letter correctly in a row! </p>"
+    };
+    var longestCorrectStreakText = "<p id='longestCorrectStreakHtml'>Your longest correct streak is " + longestCorrectGuessStreak + " letters  </p>";
+    if (longestCorrectGuessStreak === 1) {
+      longestCorrectStreakText = "<p id='longestCorrectStreakHtml'>Your longest correct streak is " + longestCorrectGuessStreak + " letter  </p>"
+    }
+//    <p id=''></p>
+//    <p id=''></p>
+document.querySelector('#gamesWonHtml').innerHTML = gamesWonText;
+document.querySelector('#gamesLostHtml').innerHTML = gamesLostText;
+if (gamesWon > 0 || gamesLost > 0) {
+  document.querySelector('#percentGamesWonHtml').innerHTML = percentGamesWonText;
+}
+document.querySelector('#currentCorrectStreakHtml').innerHTML = currentCorrectStreakText;
+document.querySelector('#longestCorrectStreakHtml').innerHTML = longestCorrectStreakText;
+  }
 
   function initilizeFirstSearchWord(){
     //this is the hard way!
@@ -484,6 +527,10 @@ console.log("initilizeFirstSearchWord");
     gameWordsObj.initAlreadyPlayNdx();
   }
 
+  function gameEnd(){
+    var gameCmdText = "<h2 id='gameCmdHtml'>Press the Space Bar if you dare to play again</h2>"
+    document.querySelector('#gameCmdHtml').innerHTML = gameCmdText;
+  }
 
 // end functions
 }// end of scripts
