@@ -1,6 +1,43 @@
 /*Hangman css Mike Henry*/
-/* debug code*/
+/* debug code
 *{
     border: 1px solid red !important
 }
 /*end debug code*/
+
+.flash-blue-blk{
+  background-color: #00F;
+  text-align: center;
+  color:  #000;
+  font-weight: bold;
+}
+.flash-blue-wht{
+  background-color: #00F;
+  text-align: center;
+  color: #FFF;
+  font-weight: bold;
+}
+.flash-red-blk{
+  background-color: #F00;
+  text-align: center;
+  color:  #000;
+  font-weight: bold;
+}
+.flash-red-wht{
+  background-color: #F00;
+  text-align: center;
+  color: #FFF;
+  font-weight: bold;
+}
+.flash-grn-blk{
+  background-color: #0F0;
+  text-align: center;
+  color:  #000;
+  font-weight: bold;
+}
+.flash-grn-wht{
+  background-color: #0F0;
+  text-align: center;
+  color: #FFF;
+  font-weight: bold;
+}

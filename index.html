@@ -11,7 +11,7 @@
 
 <body>
 <div class="jumbotron">
-  <h1 id="header1" class="text-center">Can you beat LA Lloyd's Rockcountdown at a game of classic Hangman</h1>
+  <h2 id="header1" class="text-center">Can you beat LA Lloyd's Rockcountdown at a game of classic Hangman</h2>
   <!--http://www.rock30.com/LA_Lloyd_Rock_Countdown/Home_files/424948_3170826625217_1102037981_3205266_302600201_n.jpg-->
   <div id='jumbotronSubHtml' class='text-center'>Do you dare??</div>
 </div>
@@ -51,6 +51,7 @@
 
 <script>
 {
+
 //global varibals
   var firstGame = true;
   var abcObj ={
@@ -393,18 +394,11 @@
       "<p id='allGuessedHtml'>" + stringAbcGuessed + "</p>" +
       "<p id='guessesLeftHtml'> Tries remaining = " + guessesLeft +"</p>"
     document.querySelector('#hangmanAreaHTML').innerHTML = hangmanAreaText;
+
+    var jumbotronSubText = "<div id='jumbotronSubHtml' class='text-center '>Now you've done it!!</div>"
+    document.querySelector('#jumbotronSubHtml').innerHTML = jumbotronSubText;
   }
   function updateStats(wasGuessCorrect){
-    //console.log("b4  wasGuessCorrect = " + wasGuessCorrect);
-    //console.log("lettersCorrect = " + lettersCorrect);
-    //console.log("currentCorrectGuessStreak = " + currentCorrectGuessStreak);
-    //console.log("longestCorrectGuessStreak = " + longestCorrectGuessStreak);
-    //console.log("percentGuessedRight = " + percentGuessedRight);
-    //console.log("youWon = " + youWon);
-    //console.log("gamesWon = " + gamesWon);
-    //console.log("gamesLost = " + gamesLost);
-    //console.log("gameOver = " + gameOver);
-    //console.log("percentGamesWon = " + percentGamesWon);
     if (wasGuessCorrect) {
       lettersCorrect++;
       currentCorrectGuessStreak++;
@@ -441,6 +435,7 @@
       gameOver = true;
       firstGame = false;
       gamesLost++;
+      youWon = false;
     }
 
     if (gamesWon > 0 && gamesLost === 0) {
@@ -452,20 +447,11 @@
     else  {
       percentGamesWon = 0;
     }
-    if (gameOver === true) {
-      gameEnd();
-    }
-    //console.log("after  wasGuessCorrect = " + wasGuessCorrect);
-    //console.log("lettersCorrect = " + lettersCorrect);
-    //console.log("currentCorrectGuessStreak = " + currentCorrectGuessStreak);
-    //console.log("longestCorrectGuessStreak = " + longestCorrectGuessStreak);
-    //console.log("percentGuessedRight = " + percentGuessedRight);
-    //console.log("youWon = " + youWon);
-    //console.log("gamesWon = " + gamesWon);
-    //console.log("gamesLost = " + gamesLost);
-    //console.log("gameOver = " + gameOver);
-    //console.log("percentGamesWon = " + percentGamesWon);
     outputStats();
+    if (gameOver === true) {
+      gameEnd(youWon);
+    }
+
   }//end updateStats()
 
   function outputStats(){
@@ -486,16 +472,16 @@
     if (longestCorrectGuessStreak === 1) {
       longestCorrectStreakText = "<p id='longestCorrectStreakHtml'>Your longest correct streak is " + longestCorrectGuessStreak + " letter  </p>"
     }
-//    <p id=''></p>
-//    <p id=''></p>
-document.querySelector('#gamesWonHtml').innerHTML = gamesWonText;
-document.querySelector('#gamesLostHtml').innerHTML = gamesLostText;
-if (gamesWon > 0 || gamesLost > 0) {
-  document.querySelector('#percentGamesWonHtml').innerHTML = percentGamesWonText;
-}
-document.querySelector('#currentCorrectStreakHtml').innerHTML = currentCorrectStreakText;
-document.querySelector('#longestCorrectStreakHtml').innerHTML = longestCorrectStreakText;
-  }
+
+    document.querySelector('#gamesWonHtml').innerHTML = gamesWonText;
+    document.querySelector('#gamesLostHtml').innerHTML = gamesLostText;
+    if (gamesWon > 0 || gamesLost > 0) {
+      document.querySelector('#percentGamesWonHtml').innerHTML = percentGamesWonText;
+    }
+    document.querySelector('#currentCorrectStreakHtml').innerHTML = currentCorrectStreakText;
+    document.querySelector('#longestCorrectStreakHtml').innerHTML = longestCorrectStreakText;
+
+  }// end outputStats()
 
   function initilizeFirstSearchWord(){
     //this is the hard way!
@@ -535,16 +521,29 @@ console.log("initilizeFirstSearchWord");
     gameWordsObj.initAlreadyPlayNdx();
   }
 
-  function gameEnd(){
+  function gameEnd(youWon){
+
     var gameCmdText = "<h2 id='gameCmdHtml'>Press the Space Bar if you dare to play again</h2>"
     document.querySelector('#gameCmdHtml').innerHTML = gameCmdText;
+
+    var jumbotronSubText = "";
+
+    if (youWon) {
+      jumbotronSubText = "<div id='jumbotronSubHtml' class='flash-grn-blk'>WINNER!! WINNER!! WINNER!! WINNER!! WINNER!! WINNER!! WINNER!!</div>"
+      document.querySelector('#jumbotronSubHtml').innerHTML = jumbotronSubText;
+    }
+    else{
+      jumbotronSubText = "<div id='jumbotronSubHtml' class='flash-red-blk'>LOSER!!LOSER!!LOSER!!LOSER!!LOSER!!LOSER!!LOSER!!</div>"
+      document.querySelector('#jumbotronSubHtml').innerHTML = jumbotronSubText;
+    }
+
+  //jumbotronSubText = "<div id='jumbotronSubHtml' class='text-center '>Do you dare??</div>"
+  //document.querySelector('#jumbotronSubHtml').innerHTML = jumbotronSubText;
   }
 
 // end functions
 }// end of scripts
 </script>
-
-
-<p>My second Paragraph.</p>
 </body>
 </html>
+ 
