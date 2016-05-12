@@ -268,6 +268,33 @@
   //function  initFind(input){
     var currentGameNdx = gameWordsObj.gameAlreadyPlayNdx[Math.floor(Math.random()*gameWordsObj.gameAlreadyPlayNdx.length)];
     console.log("gameWordsObj.gameWordList[currentGameNdx] = " + gameWordsObj.gameWordList[currentGameNdx] + " ndx = " + currentGameNdx);
+    //reset all the wordFindObj arrays
+    console.log("wordFindObj.searchWordArray.length = "+ wordFindObj.searchWordArray.length);
+    console.log("wordFindObj.foundLettersArray.length = "+ wordFindObj.foundLettersArray.length);
+    console.log("wordFindObj.searchWordArrayLowerCase .length = "+ wordFindObj.searchWordArrayLowerCase .length);
+    if (wordFindObj.searchWordArray.length > 0 ) {
+      //reset length of array to 0 to fix issue with long search word leaving junk if followed by short
+      for (var i = wordFindObj.searchWordArray.length; i > 0; i--) {
+          wordFindObj.searchWordArray.pop();
+        }
+    }
+
+    if (wordFindObj.foundLettersArray.length > 0 ) {
+      //reset length of array to 0 to fix issue with long search word leaving junk if followed by short
+      for (var i = wordFindObj.foundLettersArray.length; i > 0; i--) {
+        wordFindObj.foundLettersArray.pop();
+      }
+    }
+    if (wordFindObj.searchWordArrayLowerCase .length > 0 ) {
+      //reset length of array to 0 to fix issue with long search word leaving junk if followed by short
+      for (var i = wordFindObj.searchWordArrayLowerCase .length; i > 0; i--) {
+        wordFindObj.searchWordArrayLowerCase .pop();
+      }
+    }
+    console.log("wordFindObj.searchWordArray.length  (pop) = "+ wordFindObj.searchWordArray.length);
+    console.log("wordFindObj.foundLettersArray.length  (pop) = "+ wordFindObj.foundLettersArray.length);
+    console.log("wordFindObj.searchWordArrayLowerCase .length  (pop) = "+ wordFindObj.searchWordArrayLowerCase .length);
+    //end reset all the wordFindObj arrays
     wordFindObj.searchWordArray = gameWordsObj.gameWordList[currentGameNdx].split("");
     var  tempWord = gameWordsObj.gameWordList[currentGameNdx].toLowerCase();
     console.log("tempWord = "+tempWord)
