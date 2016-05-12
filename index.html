@@ -66,13 +66,11 @@
     foundLettersString: "",
     foundLettersArrayToString: function(){
       this.foundLettersString = ""; //reset to ensure it's clear before creating a new one
-      console.log("this.foundLettersArray.length = "+ this.foundLettersArray.length);
+
       for(var x=0;x<this.foundLettersArray.length;x++){
         this.foundLettersString = this.foundLettersString + this.foundLettersArray[x];
 
       }
-      console.log("this.foundLettersString =" +this.foundLettersString );
-      console.log("this.foundLettersArray = "+ this.foundLettersArray);
     }
   }
   var gameWordsObj={
@@ -123,19 +121,15 @@
     //wait for space bar hit
     if (event.keyCode === 32 && firstGame === true){
       //initilize first game if space bar hit
-      console.log("space bar -- initFirstGame");
       initFirstGame();
       //initFind();
     }
     //if not space bar is it a valid guess
     else if (!gameOver && !(event.keyCode === 32)){
-      console.log("!gameOver & not space bar");
       var userGuess = String.fromCharCode(event.keyCode).toLowerCase();
       var letterAllNdx=abcObj.letterAll.indexOf(userGuess);
-      console.log("123 userGuess = " + userGuess + " letterAllNdx = " + letterAllNdx);
       //if vaild guess
       if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[letterAllNdx] === false){
-        console.log("if(abcObj.letterAll.includes(userGuess) === true && abcObj.alreadyGuessed[letterAllNdx] === false)");
         evalUserGuess(userGuess , letterAllNdx);
         //update stats
 
@@ -146,7 +140,6 @@
     else{ //wait for space bar to continue
       if (event.keyCode === 32){
       //initilize next game if space bar hit
-      console.log("space bar and not first game")
       initNewGame();
       }
     }
@@ -284,15 +277,8 @@
     var currentGameNdx = gameWordsObj.gameAlreadyPlayNdx[Math.floor(Math.random()*gameWordsObj.gameAlreadyPlayNdx.length)];
     //make it so games are not repeted
     // remove the current from the available play list
-    console.log("b4 gameWordsObj.gameAlreadyPlayNdx.length = " +gameWordsObj.gameAlreadyPlayNdx.length)
     gameWordsObj.gameAlreadyPlayNdx.splice(gameWordsObj.gameAlreadyPlayNdx.indexOf(currentGameNdx), 1);
-    console.log("after gameWordsObj.gameAlreadyPlayNdx.length = " +gameWordsObj.gameAlreadyPlayNdx.length)
-    console.log("gameWordsObj.gameAlreadyPlayNdx = " + gameWordsObj.gameAlreadyPlayNdx);
-    console.log("gameWordsObj.gameWordList[currentGameNdx] = " + gameWordsObj.gameWordList[currentGameNdx] + " ndx = " + currentGameNdx);
     //reset all the wordFindObj arrays
-    console.log("wordFindObj.searchWordArray.length = "+ wordFindObj.searchWordArray.length);
-    console.log("wordFindObj.foundLettersArray.length = "+ wordFindObj.foundLettersArray.length);
-    console.log("wordFindObj.searchWordArrayLowerCase .length = "+ wordFindObj.searchWordArrayLowerCase .length);
     if (wordFindObj.searchWordArray.length > 0 ) {
       //reset length of array to 0 to fix issue with long search word leaving junk if followed by short
       for (var i = wordFindObj.searchWordArray.length; i > 0; i--) {
@@ -312,15 +298,10 @@
         wordFindObj.searchWordArrayLowerCase .pop();
       }
     }
-    console.log("wordFindObj.searchWordArray.length  (pop) = "+ wordFindObj.searchWordArray.length);
-    console.log("wordFindObj.foundLettersArray.length  (pop) = "+ wordFindObj.foundLettersArray.length);
-    console.log("wordFindObj.searchWordArrayLowerCase .length  (pop) = "+ wordFindObj.searchWordArrayLowerCase .length);
     //end reset all the wordFindObj arrays
     wordFindObj.searchWordArray = gameWordsObj.gameWordList[currentGameNdx].split("");
     var  tempWord = gameWordsObj.gameWordList[currentGameNdx].toLowerCase();
-    console.log("tempWord = "+tempWord);
     wordFindObj.searchWordArrayLowerCase = tempWord.split("");
-    console.log("wordFindObj.searchWordArrayLowerCase = "+wordFindObj.searchWordArrayLowerCase);
     for(var x = 0; x < wordFindObj.searchWordArray.length;x++){
       if (wordFindObj.searchWordArray[x] === " ") {
         wordFindObj.foundLettersArray[x] = "  ";
@@ -331,7 +312,6 @@
       //wordFindObj.foundLettersString = wordFindObj.foundLettersString + wordFindObj.foundLettersArray[x];
     }//end for
     wordFindObj.foundLettersArrayToString();
-    if(true){console.log("277 foundLettersString = "+ wordFindObj.foundLettersString);}
     outputHangmanArea(0);
   }//end initFind()
 
@@ -340,8 +320,6 @@
     if(wordFindObj.searchWordArrayLowerCase.includes(userGuess)){
       var searchWordArrayNdx=wordFindObj.searchWordArrayLowerCase.indexOf(userGuess);
       var searchWordArrayLastNdx=wordFindObj.searchWordArrayLowerCase.lastIndexOf(userGuess);
-      console.log("wordFindObj.searchWordArrayLowerCase = "+ wordFindObj.searchWordArrayLowerCase);
-      console.log("searchWordArrayNdx = "+ searchWordArrayNdx +" searchWordArrayLastNdx = " +searchWordArrayLastNdx);
       //if the guess is in the word we are looking for add the letter to the word and update the abc lines
       wordFindObj.foundLettersArray[searchWordArrayNdx] = wordFindObj.searchWordArray[searchWordArrayNdx];
       wordFindObj.foundLettersArrayToString();
@@ -350,13 +328,10 @@
       if (searchWordArrayNdx !=searchWordArrayLastNdx) {
         //increment searchWordArrayNdx by one and loop through until we get all of this userGuess
         for (var x = searchWordArrayNdx +1 ;x<wordFindObj.searchWordArray.length;x++){
-          console.log("searchWordArrayNdx ="+ searchWordArrayNdx + "  x = "+ x);
           searchWordArrayNdx = wordFindObj.searchWordArrayLowerCase.indexOf(userGuess, x);
-          console.log("searchWordArrayNdx ++ = "+ searchWordArrayNdx);
           if(searchWordArrayNdx===-1){
             //when wordFindObj.searchWordArray.indexOf returns -1
             //there are no more of userGuess so break out of the loop
-            console.log("searchWordArrayNdx  break");
             break;
           }
           wordFindObj.foundLettersArray[searchWordArrayNdx] = wordFindObj.searchWordArray[searchWordArrayNdx];
@@ -486,7 +461,6 @@
   function initilizeFirstSearchWord(){
     //this is the hard way!
     //need to add text file reader here.....
-console.log("initilizeFirstSearchWord");
     gameWordsObj.gameArtistList = ['3 Doors Down',
                                    'Disturbed',
                                    'Red Sun Rising',
@@ -546,4 +520,3 @@ console.log("initilizeFirstSearchWord");
 </script>
 </body>
 </html>
- 
